@@ -1,0 +1,35 @@
+.NotFoundCom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 60vh;
+  width: 100%;
+}
+
+.NotFoundCom--dflex {
+  width: 35%;
+  margin: 0 auto;
+}
+
+.NotFoundCom__img {
+  width: 100%;
+  height: 100%;
+}
+
+.NotFoundCom__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text404 {
+  color: brown;
+}
+
+/* Mobie */
+@media (max-width: 740px) {
+  .NotFoundCom--dflex {
+    display: block;
+  }
+}

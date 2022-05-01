@@ -1,0 +1,81 @@
+.FormLogin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #e3f2fd;
+  position: relative;
+}
+
+.BgForm {
+  min-width: 50vh;
+  padding: 50px 100px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(7px);
+  box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px;
+  z-index: 999;
+}
+
+.circleMWG {
+  position: absolute;
+  top: 5%;
+  left: 25%;
+  background-color: #7171ff;
+
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px;
+
+  animation: MoveUpDown 3s linear infinite;
+}
+
+.circleTanTam {
+  position: absolute;
+  bottom: 5%;
+  right: 25%;
+  background-color: #7171ff;
+
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px;
+
+  animation: MoveDownUp 3s linear infinite;
+}
+
+.circleMWG__content,
+.circleTanTam__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.circleMWG__content--color,
+.circleTanTam__content--color {
+  color: #fff;
+  margin: 0;
+  font-size: 20px;
+}
+
+@keyframes MoveUpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes MoveDownUp {
+  0%,
+  100% {
+    transform: translateY(-15px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+}
