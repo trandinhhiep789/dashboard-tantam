@@ -1,18 +1,24 @@
 import React, { memo, useState } from 'react'
-import HeaderMainMenuLeft from './header/HeaderMainMenuLeft'
+
+// other library
+import { Spin, Divider } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
+
+// css
 import '../../css/animation.css'
 import './Dashboard.css'
-import { Spin, Divider } from 'antd'
-import { Routes, Route, Link } from 'react-router-dom'
+
+// layout
+import HeaderMainMenuLeft from './header/HeaderMainMenuLeft'
 import AppPath from './app-path/AppPath'
-import NotFound from '~/ui-component/not-found/NotFound'
-import PrivateRoute from '~/routes/PrivateRoute'
-
 import MainMenuLeftNhatCuong from './main-menu/MainMenuLeftNhatCuong'
-import TestToolkitSaga from './test-ruduxtoolkit-saga/TestToolkitSaga'
 
-const Dashboard = memo(() => {
+// main routing
+import MainRoutes from '~/routes/MainRoutes'
+
+//-----------------------|| MAIN LAYOUT ||-----------------------//
+
+const Dashboard = memo(({ children }) => {
   const [isExpandWidthMenuLeft, setIsExpandWidthMenuLeft] = useState(false)
 
   return (
@@ -49,26 +55,7 @@ const Dashboard = memo(() => {
           <AppPath />
           <Divider />
           <div>
-            <Routes>
-              {/* PrivateRoute */}
-              <Route
-                path=""
-                element={
-                  <PrivateRoute>
-                    <TestToolkitSaga />
-                  </PrivateRoute>
-                }
-              />
-
-              <Route
-                path="*"
-                element={
-                  <PrivateRoute>
-                    <NotFound />
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
+            <MainRoutes />
           </div>
         </div>
       </div>
