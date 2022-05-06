@@ -6,22 +6,25 @@ import { HomeOutlined } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
 
 const AppPath = memo(() => {
-
-  const [arrPath,setArrPath] = useState([])
+  const [arrPath, setArrPath] = useState([])
   useEffect(() => {
-    console.log("da",window.location.pathname)
-    let arrPath = window.location.pathname.split("/")
+    console.log('da', window.location.pathname)
+    let arrPath = window.location.pathname.split('/')
     arrPath.shift()
     setArrPath(arrPath)
-  },[window.location.pathname])
+  }, [window.location.pathname])
 
   return (
     <div>
       <Breadcrumb>
         <Breadcrumb.Item>
-          <HomeOutlined /> 
+          <HomeOutlined />
         </Breadcrumb.Item>
-        {arrPath.map((menu, i) => <Breadcrumb.Item key={i}><NavLink to={menu}>{menu}</NavLink></Breadcrumb.Item>)}
+        {arrPath.map((menu, i) => (
+          <Breadcrumb.Item key={i}>
+            <NavLink to={menu}>{menu}</NavLink>
+          </Breadcrumb.Item>
+        ))}
       </Breadcrumb>
       {/* <Typography.Text strong>{window.location.pathname.split("/")}</Typography.Text> */}
     </div>

@@ -1,13 +1,11 @@
-
-
 .mainMenuLeftNhatCuong {
   cursor: pointer;
   transition: all 0.5;
   border-bottom: 1px solid #e7e7e7;
 }
 
-.mainMenuLeftNhatCuong:hover{
-  background-color: #f5f5f5
+.mainMenuLeftNhatCuong:hover {
+  background-color: #f5f5f5;
 }
 
 .mainMenuLeftNhatCuong__item {

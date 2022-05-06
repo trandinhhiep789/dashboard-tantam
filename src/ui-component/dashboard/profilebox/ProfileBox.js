@@ -70,11 +70,13 @@ class ProfileBox extends React.Component {
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="logout">
-          <div onClick={() => {
-            localStorage.removeItem("username")
-            localStorage.removeItem("password")
-            window.location.reload();
-          }}>
+          <div
+            onClick={() => {
+              localStorage.removeItem('username')
+              localStorage.removeItem('password')
+              window.location.reload()
+            }}
+          >
             <LogoutOutlined />
             {'  '}Đăng xuất
           </div>

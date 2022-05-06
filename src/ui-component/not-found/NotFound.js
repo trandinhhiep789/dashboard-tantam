@@ -11,7 +11,7 @@ const NotFound = memo(() => {
           <img className="NotFoundCom__img" src={error404} />
         </div>
         <NavLink to="/">
-            <b>Go to Home</b>
+          <b>Go to Home</b>
         </NavLink>
       </div>
     </div>
