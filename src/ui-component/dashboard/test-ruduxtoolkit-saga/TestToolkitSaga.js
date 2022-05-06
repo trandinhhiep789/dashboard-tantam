@@ -36,7 +36,7 @@ function TestToolkitSaga() {
         }}
       >
         <div>
-          <b>TestToolkitSaga</b>
+          <div>TestToolkitSaga</div>
           <br />
           <br />
           <div>

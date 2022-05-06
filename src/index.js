@@ -5,6 +5,9 @@ import './i18n'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 
+import 'antd/dist/antd.css'
+import './css/global-style.css'
+
 import store from './app/store'
 import { Provider } from 'react-redux'
 
