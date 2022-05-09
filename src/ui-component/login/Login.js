@@ -1,25 +1,86 @@
-import React, { memo } from 'react'
+import React, { memo, useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { Form, Input, Button, Checkbox } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import './Login.css'
 import { Notify } from 'notiflix/build/notiflix-notify-aio'
+import { Report } from 'notiflix/build/notiflix-report-aio'
 
-const index = memo(() => {
+import { AUTHEN_HOSTNAME, COOKIELOGIN, SESSION_EXPIRE_MINUTE } from '~/app/constants/systemVars'
+import { callRegisterClient } from '~/app/toolkit/registerClientSlide'
+import { callLogin, loginSuccess } from '~/app/toolkit/loginClientSlide'
+import { setCookie, getCookie } from '~/library/CommonLib'
+
+import MD5Digest from '~/library/cryptography/MD5Digest'
+
+const index = memo(({ props }) => {
   let navigate = useNavigate()
-  const onFinish = values => {
-    if (values.username == 'admin123' && values.password == '123') {
-      localStorage.setItem('username', values.username)
-      localStorage.setItem('password', values.password)
-      Notify.success('Đăng nhập thành công')
-      navigate('/')
-    } else {
-      Notify.failure('Sai tài khoản hoặc mật khẩu')
-    }
-  }
+  const dispatch = useDispatch()
+  const [isClickLoginButton, setIsClickLoginButton] = useState(false)
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false)
+  const [isRemember, setIsRemember] = useState(false)
+  const [txtUserName, setTxtUserName] = useState('')
+  const [txtPassword, setTxtPassword] = useState('')
+  const [loginMessage, setLoginMessage] = useState('')
 
+  const onFinish = values => {
+    // if (values.username == 'admin123' && values.password == '123') {
+    //   localStorage.setItem('username', values.username)
+    //   localStorage.setItem('password', values.password)
+    //   Notify.success('Đăng nhập thành công')
+    //   navigate('/')
+    // } else {
+    //   Notify.failure('Sai tài khoản hoặc mật khẩu')
+    // }
+
+    setIsClickLoginButton(true)
+    const userName = values.username
+    const passWord = MD5Digest(values.password)
+    registerClient(userName, passWord)
+  }
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo)
   }
+
+  useEffect(() => {
+    let sessionlogin = getCookie(COOKIELOGIN)
+    if (sessionlogin) {
+      let LoginInfo = JSON.parse(sessionlogin)
+      loginSuccess(LoginInfo.LoginUserInfo, LoginInfo.TokenString, LoginInfo.Password)
+      setIsLoginSuccess(true)
+    }
+  }, [])
+
+  const registerClient = async (username, password) => {
+    const reslut = await dispatch(callRegisterClient(AUTHEN_HOSTNAME, username, password))
+    // reslut.then(registerResult => {
+    //   if (!registerResult.IsError) {
+    //     this.callLogin(username, password)
+    //   } else {
+    //     this.setState({ LoginMessage: registerResult.Message })
+    //   }
+    // })
+    console.log('reslutreslutreslutreslutreslutreslut', reslut)
+  }
+  const callLoginApi = async (username, password) => {
+    await callLogin(username, password).then(loginResult => {
+      if (!loginResult.IsError) {
+        setIsLoginSuccess(true)
+        let LoginInfo = JSON.stringify(this.props.AuthenticationInfo.LoginInfo)
+        localStorage.setItem('LoginInfo', LoginInfo)
+        if (isRemember) {
+          setCookie(COOKIELOGIN, LoginInfo, SESSION_EXPIRE_MINUTE)
+        }
+        const { from } = props.location.state || { from: { pathname: '/' } }
+        props.navigation.navigate(from)
+        setIsClickLoginButton(true)
+      } else {
+        setIsClickLoginButton(false)
+        Report.failure('Thông báo', loginResult.Message, 'Okay')
+      }
+    })
+  }
+
   return (
     <div className="FormLogin">
       <div className="BgForm">
