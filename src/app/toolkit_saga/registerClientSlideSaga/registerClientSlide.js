@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 import indexedDBLib from '~/library/indexedDBLib'
 import { GUID } from '~/library/AuthenLib'
 import WebRequest from '~/library/net/WebRequest'
@@ -7,13 +9,13 @@ import {
   REGISTER_CLIENT_SUCCESS,
   REGISTER_CLIENT_FAILURE,
   REGISTER_CLIENT_LOAD_FROM_LOCAL
-} from '../constants/actionTypes'
+} from '~/app/constants/actionTypes'
 import {
   AUTHEN_HOSTNAME,
   AUTHEN_HOST_BASEURL,
   API_HOST_LIST,
   CLIENT_INFO_OBJECT_STORENAME
-} from '../constants/systemVars.js'
+} from '~/app/constants/systemVars.js'
 
 import { GenRSAKey, decryptData2 } from '~/utils/dotNetRSACrypto'
 
@@ -141,3 +143,85 @@ export function callRegisterClient(hostname, username, password) {
       })
   }
 }
+
+const initialState = {
+  AuthenAPI: {
+    IsRegisterClientRequest: false,
+    ClientID: '',
+    ClientPublicKey: '',
+    ClientPrivateKey: ''
+  }
+}
+
+// Cấu hình slice
+export const registerClientSlide = createSlice({
+  name: 'registerClient',
+  initialState,
+  reducers: {
+    REGISTER_CLIENT_REQUEST(state, action) {
+      const clientInfo1 = Object.assign({}, state[action.Hostname], {
+        IsRegisterClientRequest: true,
+        IsRegisterClientCompleted: false,
+        IsRegisterClientSuccess: false,
+        IsRegisterClientError: false,
+
+        ClientID: action.ClientID,
+        ClientPublicKey: action.ClientPublicKey,
+        ClientPrivateKey: action.ClientPrivateKey
+      })
+      return Object.assign({}, state, {
+        [action.Hostname]: clientInfo1
+      })
+    },
+    REGISTER_CLIENT_SUCCESS(state, action) {
+      const clientInfo2 = Object.assign({}, state[action.Hostname], {
+        IsRegisterClientRequest: false,
+        IsRegisterClientCompleted: true,
+        IsRegisterClientSuccess: true,
+        IsRegisterClientError: false,
+        ServerPublicKey: action.ServerPublicKey
+      })
+      return Object.assign({}, state, {
+        [action.Hostname]: clientInfo2
+      })
+    },
+    REGISTER_CLIENT_FAILURE(state, action) {
+      const clientInfo3 = Object.assign({}, state[action.Hostname], {
+        IsRegisterClientRequest: false,
+        IsRegisterClientCompleted: true,
+        IsRegisterClientSuccess: false,
+        IsRegisterClientError: true,
+        ErrorMessage: action.ErrorMessage
+      })
+
+      return Object.assign({}, state, {
+        [action.Hostname]: clientInfo3
+      })
+    },
+    REGISTER_CLIENT_LOAD_FROM_LOCAL(state, action) {
+      const clientInfo4 = Object.assign({}, state[action.Hostname], {
+        IsRegisterClientRequest: action.ClientInfo.IsRegisterClientRequest,
+        IsRegisterClientCompleted: action.ClientInfo.IsRegisterClientCompleted,
+        IsRegisterClientSuccess: action.ClientInfo.IsRegisterClientSuccess,
+        IsRegisterClientError: action.ClientInfo.IsRegisterClientError,
+
+        ClientID: action.ClientInfo.ClientID,
+        ClientPublicKey: action.ClientInfo.ClientPublicKey,
+        ClientPrivateKey: action.ClientInfo.ClientPrivateKey,
+        ServerPublicKey: action.ClientInfo.ServerPublicKey
+      })
+      return Object.assign({}, state, {
+        [action.Hostname]: clientInfo4
+      })
+    }
+  }
+})
+
+//ACTION
+export const {} = registerClientSlide.actions
+
+//SELECTOR
+export const registerClientSelector = state => state
+
+//REDUCER
+export default registerClientSlide.reducer

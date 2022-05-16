@@ -7,8 +7,8 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio'
 import { Report } from 'notiflix/build/notiflix-report-aio'
 
 import { AUTHEN_HOSTNAME, COOKIELOGIN, SESSION_EXPIRE_MINUTE } from '~/app/constants/systemVars'
-import { callRegisterClient } from '~/app/toolkit/registerClientSlide'
-import { callLogin, loginSuccess } from '~/app/toolkit/loginClientSlide'
+import { callRegisterClient } from '~/app/toolkit_saga/registerClientSlideSaga/registerClientSlide'
+import { callLogin, loginSuccess } from '~/app/toolkit_saga/loginClientSlideSaga/loginClientSlide'
 import { setCookie, getCookie } from '~/library/CommonLib'
 
 import MD5Digest from '~/library/cryptography/MD5Digest'
@@ -53,32 +53,32 @@ const index = memo(({ props }) => {
 
   const registerClient = async (username, password) => {
     const reslut = await dispatch(callRegisterClient(AUTHEN_HOSTNAME, username, password))
-    // reslut.then(registerResult => {
-    //   if (!registerResult.IsError) {
-    //     this.callLogin(username, password)
-    //   } else {
-    //     this.setState({ LoginMessage: registerResult.Message })
-    //   }
-    // })
-    console.log('reslutreslutreslutreslutreslutreslut', reslut)
+    console.log('reslut', reslut)
+    if (!reslut.IsError) {
+      callLoginApi(username, password)
+    } else {
+      setLoginMessage(reslut.Message)
+    }
   }
   const callLoginApi = async (username, password) => {
-    await callLogin(username, password).then(loginResult => {
-      if (!loginResult.IsError) {
-        setIsLoginSuccess(true)
-        let LoginInfo = JSON.stringify(this.props.AuthenticationInfo.LoginInfo)
-        localStorage.setItem('LoginInfo', LoginInfo)
-        if (isRemember) {
-          setCookie(COOKIELOGIN, LoginInfo, SESSION_EXPIRE_MINUTE)
-        }
-        const { from } = props.location.state || { from: { pathname: '/' } }
-        props.navigation.navigate(from)
-        setIsClickLoginButton(true)
-      } else {
-        setIsClickLoginButton(false)
-        Report.failure('Thông báo', loginResult.Message, 'Okay')
-      }
-    })
+    const ketqua = await dispatch(callLogin(username, password))
+    console.log('ket qua', ketqua)
+    // .then(loginResult => {
+    //   if (!loginResult.IsError) {
+    //     setIsLoginSuccess(true)
+    //     let LoginInfo = JSON.stringify(this.props.AuthenticationInfo.LoginInfo)
+    //     localStorage.setItem('LoginInfo', LoginInfo)
+    //     if (isRemember) {
+    //       setCookie(COOKIELOGIN, LoginInfo, SESSION_EXPIRE_MINUTE)
+    //     }
+    //     const { from } = props.location.state || { from: { pathname: '/' } }
+    //     props.navigation.navigate(from)
+    //     setIsClickLoginButton(true)
+    //   } else {
+    //     setIsClickLoginButton(false)
+    //     Report.failure('Thông báo', loginResult.Message, 'Okay')
+    //   }
+    // })
   }
 
   return (

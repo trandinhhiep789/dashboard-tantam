@@ -3,12 +3,13 @@ import {
   AUTHEN_HOST_BASEURL,
   CLIENT_INFO_OBJECT_STORENAME,
   COOKIELOGIN
-} from '../constants/systemVars.js'
+} from '../../constants/systemVars.js'
 import WebRequest from '~/library/net/WebRequest'
-import { callRegisterClient } from '~/app/toolkit/registerClientSlide'
+import { callRegisterClient } from '~/app/toolkit_saga/registerClientSlideSaga/registerClientSlide'
 import indexedDBLib from '~/library/indexedDBLib.js'
 import { CreateLoginData, CheckIsRegisterClient } from '~/library/AuthenLib.js'
 import { deleteCookie } from '~/library/CommonLib.js'
+import { createSlice } from '@reduxjs/toolkit'
 
 export function loginRequest(username, password) {
   return {
@@ -60,8 +61,9 @@ export function calllogout() {
 export function callLogin(username, password) {
   return (dispatch, getState) => {
     const state = getState()
-    if (state.LoginInfo.IsLoginSuccess || state.LoginInfo.IsLoginRequest) return
-    if (!CheckIsRegisterClient(state.RegisterClientInfo[AUTHEN_HOSTNAME])) {
+    console.log('state', state)
+    if (state.loginClient.IsLoginSuccess || state.loginClient.IsLoginRequest) return
+    if (!CheckIsRegisterClient(state.registerClient.AuthenAPI[AUTHEN_HOSTNAME])) {
       return dispatch(callRegisterClient(AUTHEN_HOSTNAME, username, password)).then(registerResult => {
         if (!registerResult.IsError) {
           return dispatch(callLoginAPI(username, password))
@@ -104,8 +106,8 @@ export function callLoginAPI(username, password) {
   return (dispatch, getState) => {
     const state = getState()
 
-    const clientID = state.RegisterClientInfo[AUTHEN_HOSTNAME].ClientID
-    const clientPrivateKey = state.RegisterClientInfo[AUTHEN_HOSTNAME].ClientPrivateKey
+    const clientID = state.registerClient.AuthenAPI[AUTHEN_HOSTNAME].ClientID
+    const clientPrivateKey = state.registerClient.AuthenAPI[AUTHEN_HOSTNAME].ClientPrivateKey
     //   console.log("callLogin:", state);
     dispatch(loginRequest(username, password))
     const loginData = CreateLoginData(username, password, state)
@@ -155,3 +157,74 @@ export function callLoginAPI(username, password) {
       })
   }
 }
+
+const initialState = {
+  IsLoginRequest: false,
+  IsLoginCompleted: false,
+  IsLoginSuccess: false,
+  IsRelogin: false,
+  IsLoginError: false,
+  Username: '',
+  Password: ''
+}
+
+// Cấu hình slice
+export const loginClientSlide = createSlice({
+  name: 'registerClient',
+  initialState,
+  reducers: {
+    LOGIN_REQUEST(state, action) {
+      return Object.assign({}, state, {
+        IsLoginRequest: true,
+        IsLoginSuccess: false,
+        IsLoginCompleted: false,
+        IsLoginError: false,
+        IsRelogin: false,
+        Username: action.Username,
+        Password: action.Password
+      })
+    },
+    LOGIN_SUCCESS(state, action) {
+      return Object.assign({}, state, {
+        IsLoginRequest: false,
+        IsLoginCompleted: true,
+        IsLoginSuccess: true,
+        IsLoginError: false,
+        IsRelogin: false,
+        LoginUserInfo: action.LoginUserInfo,
+        TokenString: action.TokenString,
+        Username: action.LoginUserInfo.UserName,
+        Password: action.Password
+      })
+    },
+    LOGIN_FAILURE(state, action) {
+      return Object.assign({}, state, {
+        IsLoginRequest: false,
+        IsLoginCompleted: true,
+        IsLoginSuccess: false,
+        IsLoginError: true,
+        IsRelogin: false,
+        ErrorMessage: action.ErrorMessage
+      })
+    },
+    LOGIN_RELOGIN(state, action) {
+      return Object.assign({}, state, {
+        IsLoginCompleted: false,
+        IsLoginSuccess: false,
+        IsLogout: false,
+        IsRelogin: true,
+        LoginUserInfo: {},
+        TokenString: ''
+      })
+    }
+  }
+})
+
+//ACTION
+export const {} = loginClientSlide.actions
+
+//SELECTOR
+export const loginClientSlideSelector = state => state
+
+//REDUCER
+export default loginClientSlide.reducer

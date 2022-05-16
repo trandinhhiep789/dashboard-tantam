@@ -1,6 +1,5 @@
 {
   "name": "dashboard-tamtan",
-  "homepage": "https://myapp.herokuapp.com/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

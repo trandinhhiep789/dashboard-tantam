@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import createSagaMiddleware from 'redux-saga'
-import rootSaga from './rootSaga'
+import rootSaga from './toolkit_saga/rootSaga'
 
 import authSlide from '../ui-component/dashboard/test-ruduxtoolkit-saga/auth/authSlide'
 import numberSlice from '../ui-component/dashboard/test-ruduxtoolkit-saga/counter/numberSlice'
+import registerClientSlide from '~/app/toolkit_saga/registerClientSlideSaga/registerClientSlide'
+import loginClientSlide from '~/app/toolkit_saga/loginClientSlideSaga/loginClientSlide'
 
 // Redux-Saga cung cấp một chức năng createSagaMiddle mà chúng tôi sử dụng để khởi động sagaMiddleware.
 // Bởi vì tham số middleware trong configureStore API là một mảng của phần mềm middleware hiện có,
@@ -15,8 +17,10 @@ const sagaMiddleware = createSagaMiddleware()
 
 const store = configureStore({
   reducer: {
-    numbers: numberSlice,
-    auth: authSlide
+    number: numberSlice,
+    auth: authSlide,
+    registerClient: registerClientSlide,
+    loginClient: loginClientSlide
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(sagaMiddleware)
 })
