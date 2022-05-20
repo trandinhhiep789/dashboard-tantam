@@ -2,7 +2,7 @@ import { MenuOutlined } from '@ant-design/icons';
 // other library
 import { Divider } from 'antd';
 import React, { memo, useState } from 'react';
-import MainRoutes from '~/routes/MainRoutes';
+import { Outlet } from 'react-router-dom';
 // css
 import '../../css/animation.css';
 import AppPath from './app-path/AppPath';
@@ -11,7 +11,7 @@ import './Dashboard.css';
 import HeaderMainMenuLeft from './header/HeaderMainMenuLeft';
 import MainMenuLeftNhatCuong from './main-menu/MainMenuLeftNhatCuong';
 
-const Dashboard = memo((props) => {
+const Dashboard = memo(() => {
   const [isExpandWidthMenuLeft, setIsExpandWidthMenuLeft] = useState(false)
 
   return (
@@ -47,9 +47,7 @@ const Dashboard = memo((props) => {
         <div className="dashboard__contentRight">
           <AppPath />
           <Divider />
-          <div>
-            <MainRoutes />
-          </div>
+          <Outlet />
         </div>
       </div>
     </div>

@@ -1,12 +1,21 @@
-import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Navigate, useLocation } from 'react-router-dom';
+import { COOKIELOGIN } from '~/app/constants/systemVars';
+import { LOGIN_SUCCESS } from '~/app/registerClient/registerClientSlice';
+import { getCookie } from '~/library/CommonLib';
 
-export default function PrivateRoute(props) {
-  const LoginInfo = useSelector(state => state.LoginInfo)
-  const auth = () => {
-    if (LoginInfo.IsLoginCompleted && LoginInfo.IsLoginSuccess) return true
-    return false
+const PrivateRoute = ({ children }) => {
+  let sessionLogin = getCookie(COOKIELOGIN)
+  const location = useLocation()
+
+  if (sessionLogin) {
+    return children
+  } else {
+    return <Navigate to="/login" state={{ from: location }} replace />
   }
-
-  return auth() ? props.children : <Navigate to="/login" replace />
 }
+
+PrivateRoute.displayName = 'PrivateRoute'
+
+export default PrivateRoute

@@ -1,36 +1,34 @@
 import { Button, Checkbox, Form, Input } from 'antd'
 import React, { memo, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AUTHEN_HOSTNAME, COOKIELOGIN } from '~/app/constants/systemVars'
 import { LOGIN_SUCCESS, REGISTER_CLIENT_LOADING } from '~/app/registerClient/registerClientSlice'
 import { getCookie } from '~/library/CommonLib'
 import MD5Digest from '~/library/cryptography/MD5Digest'
 import './Login.css'
 
-const Login = memo((props) => {
-  const stateLoginInfo = useSelector(state => state.LoginInfo)
-  let navigate = useNavigate()
+const Login = memo(() => {
+  const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const sessionLogin = getCookie(COOKIELOGIN)
+    let sessionLogin = getCookie(COOKIELOGIN)
     if (sessionLogin) {
-      const LoginInfo = JSON.parse(sessionLogin)
-      dispatch(LOGIN_SUCCESS(LoginInfo))
+      sessionLogin = JSON.parse(sessionLogin)
+      dispatch(LOGIN_SUCCESS(sessionLogin))
+      let from = location.state?.from?.pathname || '/'
+      navigate(from, { replace: true })
     }
   }, [])
-
-  useEffect(() => {
-    if (stateLoginInfo.IsLoginCompleted && stateLoginInfo.IsLoginSuccess) {
-      navigate("/", { replace: true })
-    }
-  }, [stateLoginInfo])
 
   const onFinish = values => {
     const userName = values.username
     const passWord = MD5Digest(values.password)
     dispatch(REGISTER_CLIENT_LOADING({ AUTHEN_HOSTNAME, userName, passWord }))
+    let from = location.state?.from?.pathname || '/'
+    navigate(from, { replace: true })
   }
 
   return (
