@@ -1,24 +1,17 @@
-import React, { memo, useState } from 'react'
-
+import { MenuOutlined } from '@ant-design/icons';
 // other library
-import { Spin, Divider } from 'antd'
-import { MenuOutlined } from '@ant-design/icons'
-
+import { Divider } from 'antd';
+import React, { memo, useState } from 'react';
+import MainRoutes from '~/routes/MainRoutes';
 // css
-import '../../css/animation.css'
-import './Dashboard.css'
-
+import '../../css/animation.css';
+import AppPath from './app-path/AppPath';
+import './Dashboard.css';
 // layout
-import HeaderMainMenuLeft from './header/HeaderMainMenuLeft'
-import AppPath from './app-path/AppPath'
-import MainMenuLeftNhatCuong from './main-menu/MainMenuLeftNhatCuong'
+import HeaderMainMenuLeft from './header/HeaderMainMenuLeft';
+import MainMenuLeftNhatCuong from './main-menu/MainMenuLeftNhatCuong';
 
-// main routing
-import MainRoutes from '~/routes/MainRoutes'
-
-//-----------------------|| MAIN LAYOUT ||-----------------------//
-
-const Dashboard = memo(({ children }) => {
+const Dashboard = memo((props) => {
   const [isExpandWidthMenuLeft, setIsExpandWidthMenuLeft] = useState(false)
 
   return (
@@ -62,5 +55,7 @@ const Dashboard = memo(({ children }) => {
     </div>
   )
 })
+
+Dashboard.displayName = "Dashboard"
 
 export default Dashboard

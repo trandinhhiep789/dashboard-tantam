@@ -61,7 +61,7 @@ export const {
 } = numberSlice.actions
 
 //SELECTOR
-export const increaseNumbrSelector = state => state.numbers.increaseNumbr
+export const increaseNumbrSelector = state => state.number.increaseNumbr
 
 //REDUCER
 export default numberSlice.reducer

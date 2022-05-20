@@ -1,12 +1,9 @@
-import React, { memo, lazy } from 'react'
-import { Routes, Route } from 'react-router-dom'
-
-import Dashboard from '~/ui-component/dashboard/Dashboard'
+import React, { lazy, memo } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import Loadable from '~/ui-component/loadable-component/Loadable'
 import NotFound from '~/ui-component/not-found/NotFound'
-
 // routing
 import PrivateRoute from './PrivateRoute'
-import Loadable from '~/ui-component/loadable-component/Loadable'
 
 // TestToolkitSaga routing
 const TestToolkitSaga = Loadable(lazy(() => import('~/ui-component/dashboard/test-ruduxtoolkit-saga/TestToolkitSaga')))

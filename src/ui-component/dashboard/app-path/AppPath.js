@@ -8,7 +8,6 @@ import { NavLink } from 'react-router-dom'
 const AppPath = memo(() => {
   const [arrPath, setArrPath] = useState([])
   useEffect(() => {
-    console.log('da', window.location.pathname)
     let arrPath = window.location.pathname.split('/')
     arrPath.shift()
     setArrPath(arrPath)

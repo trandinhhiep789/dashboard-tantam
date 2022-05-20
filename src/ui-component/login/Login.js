@@ -1,84 +1,36 @@
-import React, { memo, useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { Form, Input, Button, Checkbox } from 'antd'
+import { Button, Checkbox, Form, Input } from 'antd'
+import React, { memo, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import './Login.css'
-import { Notify } from 'notiflix/build/notiflix-notify-aio'
-import { Report } from 'notiflix/build/notiflix-report-aio'
-
-import { AUTHEN_HOSTNAME, COOKIELOGIN, SESSION_EXPIRE_MINUTE } from '~/app/constants/systemVars'
-import { callRegisterClient } from '~/app/toolkit_saga/registerClientSlideSaga/registerClientSlide'
-import { callLogin, loginSuccess } from '~/app/toolkit_saga/loginClientSlideSaga/loginClientSlide'
-import { setCookie, getCookie } from '~/library/CommonLib'
-
+import { AUTHEN_HOSTNAME, COOKIELOGIN } from '~/app/constants/systemVars'
+import { LOGIN_SUCCESS, REGISTER_CLIENT_LOADING } from '~/app/registerClient/registerClientSlice'
+import { getCookie } from '~/library/CommonLib'
 import MD5Digest from '~/library/cryptography/MD5Digest'
+import './Login.css'
 
-const index = memo(({ props }) => {
+const Login = memo((props) => {
+  const stateLoginInfo = useSelector(state => state.LoginInfo)
   let navigate = useNavigate()
   const dispatch = useDispatch()
-  const [isClickLoginButton, setIsClickLoginButton] = useState(false)
-  const [isLoginSuccess, setIsLoginSuccess] = useState(false)
-  const [isRemember, setIsRemember] = useState(false)
-  const [txtUserName, setTxtUserName] = useState('')
-  const [txtPassword, setTxtPassword] = useState('')
-  const [loginMessage, setLoginMessage] = useState('')
-
-  const onFinish = values => {
-    // if (values.username == 'admin123' && values.password == '123') {
-    //   localStorage.setItem('username', values.username)
-    //   localStorage.setItem('password', values.password)
-    //   Notify.success('Đăng nhập thành công')
-    //   navigate('/')
-    // } else {
-    //   Notify.failure('Sai tài khoản hoặc mật khẩu')
-    // }
-
-    setIsClickLoginButton(true)
-    const userName = values.username
-    const passWord = MD5Digest(values.password)
-    registerClient(userName, passWord)
-  }
-  const onFinishFailed = errorInfo => {
-    console.log('Failed:', errorInfo)
-  }
 
   useEffect(() => {
-    let sessionlogin = getCookie(COOKIELOGIN)
-    if (sessionlogin) {
-      let LoginInfo = JSON.parse(sessionlogin)
-      loginSuccess(LoginInfo.LoginUserInfo, LoginInfo.TokenString, LoginInfo.Password)
-      setIsLoginSuccess(true)
+    const sessionLogin = getCookie(COOKIELOGIN)
+    if (sessionLogin) {
+      const LoginInfo = JSON.parse(sessionLogin)
+      dispatch(LOGIN_SUCCESS(LoginInfo))
     }
   }, [])
 
-  const registerClient = async (username, password) => {
-    const reslut = await dispatch(callRegisterClient(AUTHEN_HOSTNAME, username, password))
-    console.log('reslut', reslut)
-    if (!reslut.IsError) {
-      callLoginApi(username, password)
-    } else {
-      setLoginMessage(reslut.Message)
+  useEffect(() => {
+    if (stateLoginInfo.IsLoginCompleted && stateLoginInfo.IsLoginSuccess) {
+      navigate("/", { replace: true })
     }
-  }
-  const callLoginApi = async (username, password) => {
-    const ketqua = await dispatch(callLogin(username, password))
-    console.log('ket qua', ketqua)
-    // .then(loginResult => {
-    //   if (!loginResult.IsError) {
-    //     setIsLoginSuccess(true)
-    //     let LoginInfo = JSON.stringify(this.props.AuthenticationInfo.LoginInfo)
-    //     localStorage.setItem('LoginInfo', LoginInfo)
-    //     if (isRemember) {
-    //       setCookie(COOKIELOGIN, LoginInfo, SESSION_EXPIRE_MINUTE)
-    //     }
-    //     const { from } = props.location.state || { from: { pathname: '/' } }
-    //     props.navigation.navigate(from)
-    //     setIsClickLoginButton(true)
-    //   } else {
-    //     setIsClickLoginButton(false)
-    //     Report.failure('Thông báo', loginResult.Message, 'Okay')
-    //   }
-    // })
+  }, [stateLoginInfo])
+
+  const onFinish = values => {
+    const userName = values.username
+    const passWord = MD5Digest(values.password)
+    dispatch(REGISTER_CLIENT_LOADING({ AUTHEN_HOSTNAME, userName, passWord }))
   }
 
   return (
@@ -96,7 +48,6 @@ const index = memo(({ props }) => {
             remember: true
           }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item
@@ -165,4 +116,6 @@ const index = memo(({ props }) => {
   )
 })
 
-export default index
+Login.displayName = "Login"
+
+export default Login

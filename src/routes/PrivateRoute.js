@@ -1,15 +1,12 @@
+import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
-export default function PrivateRoute({ children, isLoggedIn }) {
-  console.log('isLoggedIn', isLoggedIn)
+export default function PrivateRoute(props) {
+  const LoginInfo = useSelector(state => state.LoginInfo)
   const auth = () => {
-    let username = localStorage.getItem('username')
-    let password = localStorage.getItem('password')
-    console.log('username', username)
-    if (username == 'admin123' && password == '123') {
-      return true
-    }
+    if (LoginInfo.IsLoginCompleted && LoginInfo.IsLoginSuccess) return true
     return false
   }
-  return auth() ? children : <Navigate to="/login" />
+
+  return auth() ? props.children : <Navigate to="/login" replace />
 }
